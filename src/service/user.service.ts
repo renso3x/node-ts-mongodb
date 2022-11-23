@@ -7,13 +7,13 @@ import { omit } from 'lodash';
 export async function createUser(input: DocumentDefinition<Omit <UserDocument, "createdAt" | "updatedAt" | "comparePassword">>) {
     try {
         const user = await UserModel.create(input)
-        return omit(user.toJSON(), 'password')
+        return omit(user, 'password')
     } catch(e: any) {
         throw new Error(e)
     }
 }
 
-export async function validatePassword(email: string, password: string) {
+export async function validatePassword({email, password}: { email: string, password: string }) {
     const user = await UserModel.findOne({ email })
     if (!user) {
         return false;
@@ -22,5 +22,5 @@ export async function validatePassword(email: string, password: string) {
 
     if (!isValid) return false
 
-    return omit(user.toJSON(), 'password')
+    return omit(user, 'password')
 }
