@@ -19,7 +19,7 @@ export async function createUserSessionHandler(req: Request, res: Response) {
     const userPayload = pick(user, ['_id', 'email'])
     const accessToken = signJwt(
         { ...userPayload, session: session._id },
-        { expiresIn: parseInt(config.get<string>("accessTokenTTL"), 10)  } // expires in 15min
+        { expiresIn: parseInt(config.get<string>("accessTokenTTL"), 10) * 60 } // expires in 15min
     )
     // create a refresh token
     const refreshToken = signJwt(

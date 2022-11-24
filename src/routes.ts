@@ -1,3 +1,5 @@
+import { createProductHandler, deleteProductHandler, getProductHandler, updateProductHandler } from './controller/product.controller'
+import { createProductSchema, deleteProductSchema, getProductSchema, updateProductSchema } from './schema/product.schema'
 import { createUserSessionHandler, deleteUserSessionHandler, getUserSessionHandler } from './controller/session.controller'
 
 import { Express } from 'express'
@@ -26,6 +28,11 @@ function routes(app: Express) {
 
     app.get('/api/sessions', requireUser, getUserSessionHandler)
     app.delete('/api/sessions', requireUser, deleteUserSessionHandler)
+
+    app.post('/api/products', [requireUser, validateResource(createProductSchema)], createProductHandler)
+    app.get('/api/products/:productId', [requireUser, validateResource(getProductSchema)], getProductHandler)
+    app.put('/api/products/:productId', [requireUser, validateResource(updateProductSchema)], updateProductHandler)
+    app.delete('/api/products/:productId', [requireUser, validateResource(deleteProductSchema)], deleteProductHandler)
 }
 
 export default routes
