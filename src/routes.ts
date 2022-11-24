@@ -1,4 +1,4 @@
-import { createUserSessionHandler, getUserSessionHandler } from './controller/session.controller'
+import { createUserSessionHandler, deleteUserSessionHandler, getUserSessionHandler } from './controller/session.controller'
 
 import { Express } from 'express'
 import { createSessionSchema } from './schema/session.schema'
@@ -25,6 +25,7 @@ function routes(app: Express) {
     )
 
     app.get('/api/sessions', requireUser, getUserSessionHandler)
+    app.delete('/api/sessions', requireUser, deleteUserSessionHandler)
 }
 
 export default routes

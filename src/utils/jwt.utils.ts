@@ -4,7 +4,6 @@ import jwt from 'jsonwebtoken'
 const privateKey = config.get<string>('privateKey')
 
 export function signJwt(object: Object, options?: jwt.SignOptions | undefined) {
-    console.log(options)
     const token = jwt.sign(object, privateKey, { ...(options && options) });
     return token
     
