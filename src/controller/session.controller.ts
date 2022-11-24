@@ -1,7 +1,8 @@
 import { Request, Response } from 'express'
+import { createSession, getSession } from '../service/session.service'
 
 import config from 'config'
-import { createSession } from '../service/session.service'
+import { parse } from 'path'
 import { pick } from 'lodash'
 import { signJwt } from '../utils/jwt.utils'
 import { validatePassword } from '../service/user.service'
@@ -18,13 +19,20 @@ export async function createUserSessionHandler(req: Request, res: Response) {
     const userPayload = pick(user, ['_id', 'email'])
     const accessToken = signJwt(
         { ...userPayload, session: session._id },
-        { expiresIn: config.get<string>("accessTokenTTL") } // expires in 15min
+        { expiresIn: parseInt(config.get<string>("accessTokenTTL"), 10) * 60 } // expires in 15min
     )
     // create a refresh token
     const refreshToken = signJwt(
         { ...userPayload, session: session._id },
-        { expiresIn: config.get<string>("refreshTokenTTL") } // expires in 1yr
+        { expiresIn: parseInt(config.get<string>("refreshTokenTTL"), 10) * 60} // expires in 1yr
     )
     // return access and refreshTokens
     return res.send({ accessToken, refreshToken })
+}
+
+export async function getUserSessionHandler(req: Request, res: Response) {
+    const userId = res.locals.user._id
+    const sessions = await getSession({ user: userId, valid: true })
+    
+    return res.send({ sessions })
 }
